@@ -123,6 +123,7 @@ class FlipbookManager {
             elevation: 50,
             duration: 1000,
             pages: this.totalPages,
+            display: 'double',
             when: {
                 turning: (event, page, view) => {
                     this.currentPage = page;

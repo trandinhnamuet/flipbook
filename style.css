@@ -31,7 +31,9 @@ body {
     background: #fff;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
-    overflow: hidden;
+    overflow: visible;
+    border: none;
+    padding: 0;
 }
 
 .page {
@@ -42,16 +44,20 @@ body {
     align-items: center;
     justify-content: center;
     position: relative;
-    border: 1px solid #ddd;
+    border: none;
     overflow: hidden;
+    margin: 0;
+    padding: 0;
 }
 
 .page img {
-    max-width: 95%;
-    max-height: 95%;
+    max-width: 100%;
+    max-height: 100%;
     object-fit: contain;
-    border-radius: 5px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
 }
 
 /* First page styling */
@@ -123,8 +129,15 @@ body {
 }
 
 /* Turn.js specific styles */
+.flipbook * {
+    box-sizing: border-box;
+}
+
 .flipbook .turn-page {
     background-color: white;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
 }
 
 .flipbook .page {
@@ -133,6 +146,46 @@ body {
     -o-transform-style: preserve-3d;
     -ms-transform-style: preserve-3d;
     transform-style: preserve-3d;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    outline: none !important;
+}
+
+/* Loại bỏ khoảng cách giữa các trang */
+.flipbook .turn-page-wrapper {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    outline: none !important;
+}
+
+.flipbook .turn-page {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    outline: none !important;
+}
+
+/* Đảm bảo các trang liền mạch */
+.flipbook {
+    overflow: visible;
+}
+
+.flipbook > div {
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    outline: none !important;
+}
+
+/* Loại bỏ khoảng cách từ Turn.js */
+.flipbook .turn-page:nth-child(even) {
+    margin-left: 0 !important;
+}
+
+.flipbook .turn-page:nth-child(odd) {
+    margin-right: 0 !important;
 }
 
 /* Loading animation */
