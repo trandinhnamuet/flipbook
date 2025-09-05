@@ -93,9 +93,30 @@ class FlipbookManager {
             return;
         }
         
+        // Tự động điều chỉnh kích thước dựa trên màn hình
+        const screenWidth = window.innerWidth;
+        let flipbookWidth, flipbookHeight;
+        
+        if (screenWidth >= 1300) {
+            flipbookWidth = 1200;
+            flipbookHeight = 800;
+        } else if (screenWidth >= 1100) {
+            flipbookWidth = 1000;
+            flipbookHeight = 667;
+        } else if (screenWidth >= 900) {
+            flipbookWidth = 800;
+            flipbookHeight = 533;
+        } else if (screenWidth >= 700) {
+            flipbookWidth = 600;
+            flipbookHeight = 450;
+        } else {
+            flipbookWidth = 400;
+            flipbookHeight = 300;
+        }
+        
         $(flipbookElement).turn({
-            width: 800,
-            height: 600,
+            width: flipbookWidth,
+            height: flipbookHeight,
             autoCenter: true,
             acceleration: true,
             gradients: true,
@@ -118,6 +139,11 @@ class FlipbookManager {
         
         this.flipbook = $(flipbookElement);
         this.updateNavigationButtons();
+        
+        // Xử lý thay đổi kích thước màn hình
+        window.addEventListener('resize', () => {
+            this.handleResize();
+        });
     }
     
     updatePageCounter() {
@@ -131,6 +157,33 @@ class FlipbookManager {
         
         prevBtn.disabled = this.currentPage <= 1;
         nextBtn.disabled = this.currentPage >= this.totalPages;
+    }
+    
+    handleResize() {
+        if (!this.flipbook) return;
+        
+        const screenWidth = window.innerWidth;
+        let flipbookWidth, flipbookHeight;
+        
+        if (screenWidth >= 1300) {
+            flipbookWidth = 1200;
+            flipbookHeight = 800;
+        } else if (screenWidth >= 1100) {
+            flipbookWidth = 1000;
+            flipbookHeight = 667;
+        } else if (screenWidth >= 900) {
+            flipbookWidth = 800;
+            flipbookHeight = 533;
+        } else if (screenWidth >= 700) {
+            flipbookWidth = 600;
+            flipbookHeight = 450;
+        } else {
+            flipbookWidth = 400;
+            flipbookHeight = 300;
+        }
+        
+        // Cập nhật kích thước flipbook
+        this.flipbook.turn('size', flipbookWidth, flipbookHeight);
     }
     
     next() {
