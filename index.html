@@ -3,77 +3,317 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PhuTraco PDF Viewer</title>
+    <title>Phutraco Flipbook PDF</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
     <style>
         body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            height: 100vh;
-            background: #f0f0f0;
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
         }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        #flipbook-container {
+            position: relative;
+            margin: 20px auto;
+        }
+
         #flipbook {
-            width: 800px;
+            width: 900px;
             height: 600px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            border-radius: 8px;
+            overflow: hidden;
         }
+
         .page {
             background: #fff;
+            overflow: hidden;
+            width: 450px;
+            height: 600px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            font-size: 20px;
-            color: #333;
+            justify-content: center;
+            position: relative;
         }
-        .page img {
-            width: 100%;
+
+        .page canvas {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+        }
+
+        .page.cover {
+            width: 900px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .page.double-page {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .page.double-page .left-page,
+        .page.double-page .right-page {
+            width: 50%;
             height: 100%;
-            object-fit: contain;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #loading {
+            color: #fff;
+            font-size: 1.8em;
+            margin-top: 100px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #fff;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .page-info {
+            color: white;
+            font-size: 16px;
+            margin: 0 10px;
+        }
+
+        @media (max-width: 950px) {
+            #flipbook {
+                width: 90vw;
+                height: 60vw;
+                min-width: 320px;
+                min-height: 240px;
+            }
+            .page {
+                width: 45vw;
+                height: 60vw;
+            }
+            .page.cover {
+                width: 90vw;
+            }
+            .controls {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 1.2em;
+            text-align: center;
+            margin-top: 50px;
         }
     </style>
 </head>
 <body>
-    <div id="flipbook">
-        <!-- Trang bìa -->
-        <div class="page"><img src="phutraco.pdf" data-page-number="1" alt="Cover"></div>
-        <!-- Các trang khác (2 trang mỗi lần) -->
-        <div class="page"><img src="phutraco.pdf" data-page-number="2" alt="Page 2"></div>
-        <div class="page"><img src="phutraco.pdf" data-page-number="3" alt="Page 3"></div>
-        <!-- Thêm các div cho các trang khác nếu cần -->
+    <h1>Phutraco PDF Flipbook</h1>
+    
+    <div id="loading">
+        <div class="spinner"></div>
+        <div>Đang tải sách...</div>
     </div>
 
-    <!-- CDN cho turn.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Khởi tạo flipbook
-            $("#flipbook").turn({
-                width: 800,
-                height: 600,
-                autoCenter: true,
-                display: 'double', // Hiển thị 2 trang
-                acceleration: true,
-                gradients: true,
-                elevation: 50,
-                when: {
-                    turned: function(e, page) {
-                        console.log("Đã lật đến trang: " + page);
-                    }
-                }
-            });
+    <div id="flipbook-container" style="display: none;">
+        <div id="flipbook"></div>
+        <div class="controls">
+            <button class="btn" onclick="prevPage()">← Trang trước</button>
+            <span class="page-info" id="page-info">Trang 1</span>
+            <button class="btn" onclick="nextPage()">Trang sau →</button>
+        </div>
+    </div>
 
-            // Kéo thả để lật trang
-            $("#flipbook").bind("mousewheel", function(e) {
-                if (e.originalEvent.wheelDelta / 120 > 0) {
-                    $(this).turn("previous");
-                } else {
-                    $(this).turn("next");
+    <script>
+        // Cấu hình PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        
+        const pdfUrl = 'phutraco.pdf';
+        let flipbookInstance = null;
+        let totalPages = 0;
+
+        // Render một trang PDF thành canvas
+        async function renderPageToCanvas(pdf, pageNum, scale = 1.5) {
+            try {
+                const page = await pdf.getPage(pageNum);
+                const viewport = page.getViewport({ scale: scale });
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                
+                await page.render(renderContext).promise;
+                return canvas;
+            } catch (error) {
+                console.error(`Lỗi khi render trang ${pageNum}:`, error);
+                return null;
+            }
+        }
+
+        // Tạo flipbook từ PDF
+        async function createFlipbook() {
+            try {
+                const loadingDiv = document.getElementById('loading');
+                const container = document.getElementById('flipbook-container');
+                const flipbook = document.getElementById('flipbook');
+
+                // Tải PDF
+                const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
+                totalPages = pdf.numPages;
+                
+                loadingDiv.querySelector('div:last-child').textContent = `Đang xử lý ${totalPages} trang...`;
+
+                let flipbookHTML = '';
+                
+                // Trang bìa (trang đầu tiên)
+                const coverCanvas = await renderPageToCanvas(pdf, 1);
+                if (coverCanvas) {
+                    flipbookHTML += `<div class="page cover">${coverCanvas.outerHTML}</div>`;
                 }
-                e.preventDefault();
-            });
+
+                // Các trang còn lại - hiển thị 2 trang 1
+                for (let i = 2; i <= totalPages; i += 2) {
+                    const leftCanvas = await renderPageToCanvas(pdf, i);
+                    const rightCanvas = i + 1 <= totalPages ? await renderPageToCanvas(pdf, i + 1) : null;
+                    
+                    let pageHTML = '<div class="page double-page">';
+                    
+                    if (leftCanvas) {
+                        pageHTML += `<div class="left-page">${leftCanvas.outerHTML}</div>`;
+                    }
+                    
+                    if (rightCanvas) {
+                        pageHTML += `<div class="right-page">${rightCanvas.outerHTML}</div>`;
+                    } else {
+                        pageHTML += '<div class="right-page"></div>'; // Trang trống
+                    }
+                    
+                    pageHTML += '</div>';
+                    flipbookHTML += pageHTML;
+                }
+
+                // Thêm HTML vào flipbook
+                flipbook.innerHTML = flipbookHTML;
+
+                // Ẩn loading, hiện flipbook
+                loadingDiv.style.display = 'none';
+                container.style.display = 'block';
+
+                // Khởi tạo turn.js
+                $(flipbook).turn({
+                    width: 900,
+                    height: 600,
+                    autoCenter: true,
+                    display: 'double',
+                    acceleration: true,
+                    gradients: true,
+                    elevation: 50,
+                    when: {
+                        turning: function(event, page, view) {
+                            updatePageInfo(page);
+                        }
+                    }
+                });
+
+                flipbookInstance = $(flipbook);
+                updatePageInfo(1);
+
+            } catch (error) {
+                console.error('Lỗi khi tạo flipbook:', error);
+                document.getElementById('loading').innerHTML = 
+                    '<div class="error-message">Không thể tải file PDF! Vui lòng kiểm tra đường dẫn file.</div>';
+            }
+        }
+
+        // Cập nhật thông tin trang
+        function updatePageInfo(currentPage) {
+            const pageInfo = document.getElementById('page-info');
+            const totalFlipPages = Math.ceil((totalPages - 1) / 2) + 1; // +1 cho trang bìa
+            pageInfo.textContent = `Trang ${currentPage} / ${totalFlipPages}`;
+        }
+
+        // Chuyển đến trang trước
+        function prevPage() {
+            if (flipbookInstance) {
+                flipbookInstance.turn('previous');
+            }
+        }
+
+        // Chuyển đến trang sau  
+        function nextPage() {
+            if (flipbookInstance) {
+                flipbookInstance.turn('next');
+            }
+        }
+
+        // Xử lý phím tắt
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') {
+                prevPage();
+            } else if (e.key === 'ArrowRight') {
+                nextPage();
+            }
         });
+
+        // Khởi chạy khi trang web load xong
+        window.addEventListener('load', createFlipbook);
     </script>
 </body>
 </html>
