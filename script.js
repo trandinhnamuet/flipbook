@@ -93,6 +93,8 @@ class FlipbookManager {
             return;
         }
         
+        console.log('Initializing flipbook with', this.totalPages, 'pages');
+        
         // Tự động điều chỉnh kích thước dựa trên màn hình
         const screenWidth = window.innerWidth;
         let flipbookWidth, flipbookHeight;
@@ -121,26 +123,41 @@ class FlipbookManager {
             acceleration: true,
             gradients: true,
             elevation: 50,
-            duration: 1000,
+            duration: 800,
             pages: this.totalPages,
             display: 'double',
             turnCorners: 'bl,br,tl,tr',
+            inclination: 0,
             when: {
                 turning: (event, page, view) => {
+                    console.log('Turning to page:', page);
                     this.currentPage = page;
                     this.updatePageCounter();
                     this.updateNavigationButtons();
                 },
                 turned: (event, page, view) => {
+                    console.log('Turned to page:', page);
                     this.currentPage = page;
                     this.updatePageCounter();
                     this.updateNavigationButtons();
+                },
+                start: (event, pageObject, corner) => {
+                    console.log('Drag started on corner:', corner);
+                },
+                end: (event, pageObject, corner) => {
+                    console.log('Drag ended on corner:', corner);
                 }
             }
         });
         
         this.flipbook = $(flipbookElement);
         this.updateNavigationButtons();
+        
+        // Đảm bảo Turn.js đã được khởi tạo hoàn toàn
+        setTimeout(() => {
+            // Kích hoạt lại tính năng turn nếu cần
+            this.flipbook.turn('option', 'turnCorners', 'bl,br,tl,tr');
+        }, 100);
         
         // Xử lý thay đổi kích thước màn hình
         window.addEventListener('resize', () => {

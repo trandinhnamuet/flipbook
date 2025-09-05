@@ -76,7 +76,6 @@ body {
     box-shadow: none;
     margin: 0;
     padding: 0;
-    pointer-events: none;
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -85,6 +84,7 @@ body {
     -khtml-user-drag: none;
     -moz-user-drag: none;
     -o-user-drag: none;
+    /* Không sử dụng pointer-events: none để cho phép kéo thả */
 }
 
 /* First page styling */
@@ -209,6 +209,27 @@ body {
 
 .flipbook .turn-page:hover {
     cursor: pointer;
+}
+
+/* Đảm bảo khu vực có thể kéo thả ở các góc */
+.flipbook .turn-page {
+    position: relative;
+}
+
+.flipbook .turn-page::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.flipbook .turn-page:first-child::before {
+    left: 0;
+    right: auto;
 }
 
 .flipbook > div {
