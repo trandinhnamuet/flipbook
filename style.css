@@ -128,16 +128,33 @@ body {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Turn.js specific styles */
+/* Turn.js specific styles - Loại bỏ hoàn toàn khoảng cách */
 .flipbook * {
     box-sizing: border-box;
 }
 
+/* Force remove all spacing from Turn.js */
 .flipbook .turn-page {
     background-color: white;
     border: none !important;
     box-shadow: none !important;
     outline: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: absolute !important;
+}
+
+/* Điều chỉnh vị trí các trang để loại bỏ khoảng cách */
+.flipbook .turn-page:nth-child(even) {
+    left: 50% !important;
+    margin-left: 0 !important;
+    transform: translateX(0) !important;
+}
+
+.flipbook .turn-page:nth-child(odd) {
+    left: 0 !important;
+    margin-right: 0 !important;
+    transform: translateX(0) !important;
 }
 
 .flipbook .page {
@@ -150,17 +167,12 @@ body {
     margin: 0 !important;
     padding: 0 !important;
     outline: none !important;
+    width: 100% !important;
+    height: 100% !important;
 }
 
 /* Loại bỏ khoảng cách giữa các trang */
 .flipbook .turn-page-wrapper {
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    outline: none !important;
-}
-
-.flipbook .turn-page {
     margin: 0 !important;
     padding: 0 !important;
     border: none !important;
@@ -179,13 +191,52 @@ body {
     outline: none !important;
 }
 
-/* Loại bỏ khoảng cách từ Turn.js */
-.flipbook .turn-page:nth-child(even) {
+/* Override Turn.js default spacing */
+.flipbook .turn-page {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    outline: none !important;
+    box-sizing: border-box !important;
+}
+
+/* Force pages to touch each other */
+.flipbook .turn-page:nth-child(1) { left: 0 !important; }
+.flipbook .turn-page:nth-child(2) { left: 50% !important; }
+.flipbook .turn-page:nth-child(3) { left: 0 !important; }
+.flipbook .turn-page:nth-child(4) { left: 50% !important; }
+
+/* Additional CSS to force zero spacing */
+.flipbook {
+    letter-spacing: 0 !important;
+    word-spacing: 0 !important;
+    font-size: 0 !important;
+}
+
+.flipbook .turn-page {
+    font-size: initial !important;
+    display: inline-block !important;
+    vertical-align: top !important;
+}
+
+/* Remove any possible gaps */
+.flipbook .turn-page + .turn-page {
     margin-left: 0 !important;
 }
 
-.flipbook .turn-page:nth-child(odd) {
-    margin-right: 0 !important;
+/* Force exact positioning */
+.flipbook[data-page="1"] .turn-page:nth-child(1) { 
+    left: 50% !important; 
+    width: 50% !important;
+}
+
+.flipbook[data-page="2"] .turn-page:nth-child(1) { 
+    left: 0 !important; 
+    width: 50% !important;
+}
+.flipbook[data-page="2"] .turn-page:nth-child(2) { 
+    left: 50% !important; 
+    width: 50% !important;
 }
 
 /* Loading animation */

@@ -124,6 +124,7 @@ class FlipbookManager {
             duration: 1000,
             pages: this.totalPages,
             display: 'double',
+            page: 1,
             when: {
                 turning: (event, page, view) => {
                     this.currentPage = page;
@@ -134,9 +135,30 @@ class FlipbookManager {
                     this.currentPage = page;
                     this.updatePageCounter();
                     this.updateNavigationButtons();
+                    // Force zero spacing after each turn
+                    setTimeout(() => this.forceZeroSpacing(), 50);
+                },
+                start: (event, pageObject, corner) => {
+                    // Custom start handler
+                },
+                end: (event, pageObject, turned) => {
+                    // Custom end handler
                 }
             }
         });
+        
+        // Force remove spacing after initialization
+        setTimeout(() => {
+            $('.flipbook .turn-page').css({
+                'margin': '0',
+                'padding': '0',
+                'border': 'none',
+                'box-shadow': 'none'
+            });
+            
+            // Force positioning to remove gaps
+            this.forceZeroSpacing();
+        }, 100);
         
         this.flipbook = $(flipbookElement);
         this.updateNavigationButtons();
@@ -144,6 +166,30 @@ class FlipbookManager {
         // Xử lý thay đổi kích thước màn hình
         window.addEventListener('resize', () => {
             this.handleResize();
+        });
+    }
+    
+    forceZeroSpacing() {
+        // Force remove any spacing between pages
+        const pages = $('.flipbook .turn-page');
+        pages.each(function(index) {
+            $(this).css({
+                'position': 'absolute',
+                'top': '0',
+                'margin': '0',
+                'padding': '0',
+                'border': 'none',
+                'box-shadow': 'none'
+            });
+            
+            // Position pages exactly
+            if (index % 2 === 0) {
+                // Left page
+                $(this).css('left', '0');
+            } else {
+                // Right page
+                $(this).css('left', '50%');
+            }
         });
     }
     
