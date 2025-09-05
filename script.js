@@ -160,9 +160,11 @@ class FlipbookManager {
         }, 100);
         
         // Xử lý thay đổi kích thước màn hình
-        window.addEventListener('resize', () => {
+            // Luôn chạy handleResize một lần khi khởi tạo
             this.handleResize();
-        });
+            window.addEventListener('resize', () => {
+                this.handleResize();
+            });
     }
     
     updatePageCounter() {
