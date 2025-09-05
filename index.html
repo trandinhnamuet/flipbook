@@ -36,43 +36,44 @@
             height: 600px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.4);
             border-radius: 8px;
-            overflow: hidden;
+            overflow: visible;
+            background: transparent;
         }
 
         .page {
-            background: #fff;
-            overflow: visible;
-            width: 450px;
-            height: 600px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            border: 2px solid #333;
-            box-sizing: border-box;
+            background: #fff !important;
+            overflow: visible !important;
+            width: 450px !important;
+            height: 600px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            position: relative !important;
+            border: 2px solid #333 !important;
+            box-sizing: border-box !important;
         }
 
         .page canvas {
             width: auto !important;
             height: auto !important;
-            max-width: 100%;
-            max-height: 100%;
+            max-width: 90% !important;
+            max-height: 90% !important;
             display: block !important;
             visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 1 !important;
         }
 
         .page.cover {
-            width: 900px;
-            background: #f0f0f0;
-            border: 3px solid #333;
+            width: 900px !important;
+            background: #f9f9f9 !important;
+            border: 3px solid #333 !important;
         }
 
         .page.cover canvas {
-            width: auto !important;
-            height: auto !important;
-            max-width: 95%;
-            max-height: 95%;
-            object-fit: contain;
+            max-width: 85% !important;
+            max-height: 85% !important;
         }
 
         .page.double-page {
@@ -316,20 +317,41 @@
 
                 // Khởi tạo turn.js với timeout để đảm bảo DOM đã render
                 setTimeout(() => {
+                    // Đảm bảo tất cả canvas vẫn hiển thị
+                    flipbook.querySelectorAll('canvas').forEach(canvas => {
+                        canvas.style.display = 'block';
+                        canvas.style.visibility = 'visible';
+                        canvas.style.opacity = '1';
+                    });
+                    
                     $(flipbook).turn({
                         width: 900,
                         height: 600,
                         autoCenter: true,
                         display: 'single',
-                        acceleration: true,
-                        gradients: true,
-                        elevation: 50,
+                        acceleration: false, // Tắt acceleration để tránh ẩn canvas
+                        gradients: false,    // Tắt gradients
+                        elevation: 0,        // Tắt elevation
                         when: {
                             turning: function(event, page, view) {
                                 updatePageInfo(page);
+                                // Đảm bảo canvas vẫn hiển thị sau khi lật trang
+                                setTimeout(() => {
+                                    flipbook.querySelectorAll('canvas').forEach(canvas => {
+                                        canvas.style.display = 'block';
+                                        canvas.style.visibility = 'visible';
+                                        canvas.style.opacity = '1';
+                                    });
+                                }, 50);
                             },
                             turned: function(event, page, view) {
                                 console.log('Đã lật đến trang:', page);
+                                // Đảm bảo canvas vẫn hiển thị
+                                flipbook.querySelectorAll('canvas').forEach(canvas => {
+                                    canvas.style.display = 'block';
+                                    canvas.style.visibility = 'visible';
+                                    canvas.style.opacity = '1';
+                                });
                             }
                         }
                     });
@@ -337,7 +359,17 @@
                     flipbookInstance = $(flipbook);
                     updatePageInfo(1);
                     console.log('Turn.js đã được khởi tạo thành công!');
-                }, 100);
+                    
+                    // Cuối cùng, đảm bảo tất cả canvas hiển thị
+                    setTimeout(() => {
+                        flipbook.querySelectorAll('canvas').forEach(canvas => {
+                            canvas.style.display = 'block';
+                            canvas.style.visibility = 'visible';
+                            canvas.style.opacity = '1';
+                        });
+                        console.log('Đã force hiển thị tất cả canvas');
+                    }, 200);
+                }, 500);
 
             } catch (error) {
                 console.error('Lỗi khi tạo flipbook:', error);
