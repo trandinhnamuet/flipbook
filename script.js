@@ -186,8 +186,8 @@ class FlipbookManager {
         
         if (screenWidth >= 1300) {
             console.log("First")
-            flipbookWidth = 1700;
-            flipbookHeight = 1300;
+            flipbookWidth = 1400;
+            flipbookHeight = 1000;
         } else if (screenWidth >= 1100) {
             console.log("Second")
             flipbookWidth = 1000;
