@@ -4,10 +4,27 @@
     box-sizing: border-box;
 }
 
+/* Ẩn tất cả thanh scroll */
+html, body {
+    overflow: hidden;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+/* Ẩn thanh scroll cho Webkit browsers (Chrome, Safari, Edge) */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
 body {
     font-family: 'Arial', sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
+    max-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -24,6 +41,8 @@ body {
 }
 
 .flipbook {
+    width: 1400px;
+    height: 1000px;
     margin: 0 auto;
     position: relative;
     background: #fff;
@@ -146,8 +165,8 @@ body {
 /* Page counter */
 .page-counter {
     position: absolute;
-    bottom: -50px;
-    left: 50%;
+    bottom: 855px;
+    left: -5%;
     transform: translateX(-50%);
     background: rgba(255, 255, 255, 0.9);
     padding: 10px 20px;
@@ -168,6 +187,33 @@ body {
     box-shadow: none !important;
     outline: none !important;
     cursor: pointer;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Đặc biệt xử lý khi Turn.js ở chế độ double display */
+.flipbook.turn-page-wrapper {
+    gap: 0 !important;
+    column-gap: 0 !important;
+}
+
+/* Loại bỏ border-spacing và cell-spacing có thể được Turn.js tạo ra */
+.flipbook table,
+.flipbook tbody,
+.flipbook tr,
+.flipbook td {
+    border-spacing: 0 !important;
+    border-collapse: collapse !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+}
+
+/* Loại bỏ mọi khoảng cách có thể được thêm bởi Turn.js */
+.flipbook .turn-page[style*="left"],
+.flipbook .turn-page[style*="right"] {
+    margin: 0 !important;
+    border: none !important;
 }
 
 .flipbook .page {
@@ -183,12 +229,15 @@ body {
     cursor: pointer;
 }
 
-/* Loại bỏ khoảng cách giữa các trang */
+/* Loại bỏ khoảng cách giữa các trang - áp dụng cho tất cả kích thước */
 .flipbook .turn-page-wrapper {
     margin: 0 !important;
     padding: 0 !important;
     border: none !important;
     outline: none !important;
+    gap: 0 !important;
+    column-gap: 0 !important;
+    row-gap: 0 !important;
 }
 
 .flipbook .turn-page {
@@ -197,11 +246,17 @@ body {
     border: none !important;
     outline: none !important;
     cursor: pointer;
+    gap: 0 !important;
+    column-gap: 0 !important;
+    row-gap: 0 !important;
 }
 
-/* Đảm bảo các trang liền mạch */
+/* Đảm bảo các trang liền mạch - loại bỏ mọi khoảng cách */
 .flipbook {
     overflow: visible;
+    gap: 0 !important;
+    column-gap: 0 !important;
+    row-gap: 0 !important;
 }
 
 .flipbook > div {
@@ -209,6 +264,26 @@ body {
     margin: 0 !important;
     padding: 0 !important;
     outline: none !important;
+    gap: 0 !important;
+    column-gap: 0 !important;
+    row-gap: 0 !important;
+}
+
+/* Loại bỏ khoảng cách cụ thể cho Turn.js */
+.flipbook .turn-page:nth-child(even),
+.flipbook .turn-page:nth-child(odd) {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    gap: 0 !important;
+}
+
+/* Đảm bảo không có khoảng cách khi display double */
+.flipbook[style*="display"] .turn-page {
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    border-spacing: 0 !important;
 }
 
 /* Kích hoạt kéo thả cho các góc trang */
@@ -250,6 +325,15 @@ body {
     .flipbook {
         width: 1000px;
         height: 667px;
+        gap: 0 !important;
+    }
+    
+    /* Loại bỏ khoảng cách ở kích thước này */
+    .flipbook .turn-page {
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        gap: 0 !important;
     }
     
     .nav-btn {
@@ -271,6 +355,15 @@ body {
     .flipbook {
         width: 800px;
         height: 533px;
+        gap: 0 !important;
+    }
+    
+    /* Loại bỏ khoảng cách ở kích thước này */
+    .flipbook .turn-page {
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        gap: 0 !important;
     }
     
     .flipbook-container {
@@ -282,6 +375,15 @@ body {
     .flipbook {
         width: 600px;
         height: 450px;
+        gap: 0 !important;
+    }
+    
+    /* Loại bỏ khoảng cách ở kích thước này */
+    .flipbook .turn-page {
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        gap: 0 !important;
     }
     
     .nav-btn {
@@ -303,6 +405,15 @@ body {
     .flipbook {
         width: 400px;
         height: 300px;
+        gap: 0 !important;
+    }
+    
+    /* Loại bỏ khoảng cách ở kích thước này */
+    .flipbook .turn-page {
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        gap: 0 !important;
     }
     
     .flipbook-container {

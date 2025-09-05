@@ -304,16 +304,16 @@ class FlipbookManager {
         
         if (screenWidth >= 1300) {
             console.log("First")
-            flipbookWidth = 1400;
-            flipbookHeight = 1000;
+            flipbookWidth = 1271;
+            flipbookHeight = 900;
         } else if (screenWidth >= 1100) {
             console.log("Second")
             flipbookWidth = 1000;
-            flipbookHeight = 667;
+            flipbookHeight = 707;
         } else if (screenWidth >= 900) {
             console.log("Third")
             flipbookWidth = 800;
-            flipbookHeight = 533;
+            flipbookHeight = 566;
         } else if (screenWidth >= 700) {
             console.log("Fourth")
             flipbookWidth = 600;
@@ -321,7 +321,7 @@ class FlipbookManager {
         } else {
             console.log("Fifth")
             flipbookWidth = 400;
-            flipbookHeight = 300;
+            flipbookHeight = 283;
         }
         
         // Cập nhật kích thước flipbook
