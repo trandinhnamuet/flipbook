@@ -24,8 +24,6 @@ body {
 }
 
 .flipbook {
-    width: 1400px;
-    height: 1900px;
     margin: 0 auto;
     position: relative;
     background: #fff;
@@ -77,6 +75,18 @@ body {
     -khtml-user-drag: none;
     -moz-user-drag: none;
     -o-user-drag: none;
+    pointer-events: none;
+}
+
+/* Đảm bảo flipbook và pages có thể tương tác */
+.flipbook, .flipbook .turn-page, .page {
+    pointer-events: auto !important;
+    cursor: grab !important;
+}
+
+/* Hiển thị cursor grabbing khi đang kéo */
+.flipbook:active, .flipbook .turn-page:active, .page:active {
+    cursor: grabbing !important;
 }
 
 /* First page styling */

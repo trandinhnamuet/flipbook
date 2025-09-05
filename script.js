@@ -127,7 +127,6 @@ class FlipbookManager {
             pages: this.totalPages,
             display: 'double',
             turnCorners: 'bl,br,tl,tr',
-            inclination: 0,
             when: {
                 turning: (event, page, view) => {
                     console.log('Turning to page:', page);
@@ -146,6 +145,12 @@ class FlipbookManager {
                 },
                 end: (event, pageObject, corner) => {
                     console.log('Drag ended on corner:', corner);
+                },
+                pressed: (event, pageObject, corner) => {
+                    console.log('Page pressed at corner:', corner);
+                },
+                released: (event, pageObject, corner) => {
+                    console.log('Page released at corner:', corner);
                 }
             }
         });
@@ -153,10 +158,20 @@ class FlipbookManager {
         this.flipbook = $(flipbookElement);
         this.updateNavigationButtons();
         
+        // Thêm debug events cho kéo thả
+        this.addDebugEvents();
+        
         // Đảm bảo Turn.js đã được khởi tạo hoàn toàn
         setTimeout(() => {
-            // Kích hoạt lại tính năng turn nếu cần - sử dụng cú pháp đúng
             console.log('Turn.js initialized successfully');
+            // Test basic Turn.js functionality
+            try {
+                console.log('Current page:', this.flipbook.turn('page'));
+                console.log('Total pages:', this.flipbook.turn('pages'));
+                console.log('Turn.js is working properly');
+            } catch(e) {
+                console.log('Turn.js basic functions not working:', e.message);
+            }
         }, 100);
         
         // Xử lý thay đổi kích thước màn hình
@@ -180,6 +195,107 @@ class FlipbookManager {
         nextBtn.disabled = this.currentPage >= this.totalPages;
     }
     
+    addDebugEvents() {
+        const flipbookElement = document.getElementById('flipbook');
+        
+        // Debug mouse events
+        flipbookElement.addEventListener('mousedown', (e) => {
+            console.log('Mouse down on flipbook at:', e.clientX, e.clientY);
+            console.log('Target element:', e.target);
+            
+            // Check if we're near a corner
+            const rect = flipbookElement.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const width = rect.width;
+            const height = rect.height;
+            
+            console.log('Relative position:', x, y, 'Size:', width, height);
+            
+            // Check corners (mở rộng vùng corner để chiếm gần toàn bộ trang)
+            const cornerSize = Math.min(width * 0.75, height * 0.75); // 45% kích thước trang
+            let corner = null;
+            
+            if (x <= cornerSize && y <= cornerSize) corner = 'tl';
+            else if (x >= width - cornerSize && y <= cornerSize) corner = 'tr';
+            else if (x <= cornerSize && y >= height - cornerSize) corner = 'bl';
+            else if (x >= width - cornerSize && y >= height - cornerSize) corner = 'br';
+            
+            if (corner) {
+                console.log('Detected corner:', corner);
+                // Manually trigger page turn based on corner
+                setTimeout(() => {
+                    if (corner === 'br' || corner === 'tr') {
+                        console.log('Triggering next page from corner:', corner);
+                        this.next();
+                    } else if (corner === 'bl' || corner === 'tl') {
+                        console.log('Triggering previous page from corner:', corner);
+                        this.previous();
+                    }
+                }, 100);
+            } else {
+                console.log('Not in any corner area');
+                console.log('Corner size:', cornerSize);
+                console.log('Corner areas: TL(0-' + cornerSize + ',0-' + cornerSize + '), TR(' + (width-cornerSize) + '-' + width + ',0-' + cornerSize + '), BL(0-' + cornerSize + ',' + (height-cornerSize) + '-' + height + '), BR(' + (width-cornerSize) + '-' + width + ',' + (height-cornerSize) + '-' + height + ')');
+            }
+        });
+        
+        flipbookElement.addEventListener('mouseup', (e) => {
+            console.log('Mouse up on flipbook at:', e.clientX, e.clientY);
+        });
+        
+        flipbookElement.addEventListener('mousemove', (e) => {
+            // Only log when mouse is pressed
+            if (e.buttons === 1) {
+                console.log('Mouse drag on flipbook at:', e.clientX, e.clientY);
+            }
+        });
+        
+        flipbookElement.addEventListener('click', (e) => {
+            console.log('Click on flipbook at:', e.clientX, e.clientY);
+            console.log('Clicked element:', e.target);
+        });
+        
+        // Debug turn.js specific events
+        $(flipbookElement).on('pressed', (event, pageObject, corner) => {
+            console.log('Turn.js pressed event - corner:', corner);
+        });
+        
+        $(flipbookElement).on('released', (event, pageObject, corner) => {
+            console.log('Turn.js released event - corner:', corner);
+        });
+        
+        $(flipbookElement).on('missing', (event, pages) => {
+            console.log('Turn.js missing pages:', pages);
+        });
+        
+        // Try to directly handle page clicks
+        setTimeout(() => {
+            $('.turn-page').on('mousedown', (e) => {
+                console.log('Direct page mousedown detected');
+                const page = $(e.currentTarget);
+                const pageNumber = page.attr('class').match(/p(\d+)/);
+                if (pageNumber) {
+                    console.log('Clicked on page:', pageNumber[1]);
+                }
+            });
+        }, 1000);
+        
+        // Test turn.js methods
+        setTimeout(() => {
+            try {
+                console.log('Testing Turn.js methods after initialization...');
+                if (this.flipbook && this.flipbook.turn) {
+                    console.log('Turn.js methods available');
+                } else {
+                    console.log('Turn.js methods not available');
+                }
+            } catch(e) {
+                console.log('Error testing Turn.js:', e.message);
+            }
+        }, 200);
+    }
+    
     handleResize() {
         if (!this.flipbook) return;
         
@@ -189,7 +305,7 @@ class FlipbookManager {
         if (screenWidth >= 1300) {
             console.log("First")
             flipbookWidth = 1400;
-            flipbookHeight = 1900;
+            flipbookHeight = 1000;
         } else if (screenWidth >= 1100) {
             console.log("Second")
             flipbookWidth = 1000;
@@ -214,23 +330,128 @@ class FlipbookManager {
     
     next() {
         if (this.flipbook && this.currentPage < this.totalPages) {
+            console.log('Manual next page from', this.currentPage, 'to', this.currentPage + 1);
             this.flipbook.turn('next');
         }
     }
-    
+
     previous() {
         if (this.flipbook && this.currentPage > 1) {
+            console.log('Manual previous page from', this.currentPage, 'to', this.currentPage - 1);
             this.flipbook.turn('previous');
         }
     }
-    
+
     goToPage(page) {
         if (this.flipbook && page >= 1 && page <= this.totalPages) {
+            console.log('Manual go to page:', page);
             this.flipbook.turn('page', page);
         }
     }
     
-    setupEventListeners() {
+    // Test method for manual corner triggering
+    testCornerDrag(corner) {
+        console.log('Testing corner drag:', corner);
+        if (this.flipbook) {
+            try {
+                // Try different methods to trigger page turn
+                if (corner === 'br' || corner === 'tr') {
+                    console.log('Trying to go to next page');
+                    this.flipbook.turn('next');
+                } else if (corner === 'bl' || corner === 'tl') {
+                    console.log('Trying to go to previous page');
+                    this.flipbook.turn('previous');
+                }
+            } catch(e) {
+                console.log('Error in testCornerDrag:', e.message);
+            }
+        } else {
+            console.log('Flipbook not initialized');
+        }
+    }
+    
+    // Method to enable/disable corners
+    enableCorners(enabled = true) {
+        if (this.flipbook) {
+            try {
+                console.log('Attempting to', enabled ? 'enable' : 'disable', 'corners');
+                // Try different approaches to enable corners
+                const cornerValue = enabled ? 'bl,br,tl,tr' : '';
+                
+                // Method 1: Set turnCorners option
+                this.flipbook.turn('turnCorners', cornerValue);
+                
+                // Method 2: Force re-initialization if needed
+                if (enabled) {
+                    // Re-bind turn.js events
+                    this.flipbook.turn('destroy');
+                    setTimeout(() => {
+                        this.initializeTurnJs();
+                    }, 100);
+                }
+                
+                console.log('Corners', enabled ? 'enabled' : 'disabled');
+            } catch(e) {
+                console.log('Error setting corners:', e.message);
+            }
+        }
+    }
+    
+    // Separate method to initialize Turn.js
+    initializeTurnJs() {
+        const flipbookElement = document.getElementById('flipbook');
+        const screenWidth = window.innerWidth;
+        let flipbookWidth, flipbookHeight;
+        
+        if (screenWidth >= 1300) {
+            flipbookWidth = 1400;
+            flipbookHeight = 1000;
+        } else {
+            flipbookWidth = 1000;
+            flipbookHeight = 667;
+        }
+        
+        $(flipbookElement).turn({
+            width: flipbookWidth,
+            height: flipbookHeight,
+            autoCenter: true,
+            acceleration: true,
+            gradients: true,
+            elevation: 50,
+            duration: 800,
+            pages: this.totalPages,
+            display: 'double',
+            turnCorners: 'bl,br,tl,tr',
+            when: {
+                turning: (event, page, view) => {
+                    console.log('Turning to page:', page);
+                    this.currentPage = page;
+                    this.updatePageCounter();
+                    this.updateNavigationButtons();
+                },
+                turned: (event, page, view) => {
+                    console.log('Turned to page:', page);
+                    this.currentPage = page;
+                    this.updatePageCounter();
+                    this.updateNavigationButtons();
+                },
+                start: (event, pageObject, corner) => {
+                    console.log('Drag started on corner:', corner);
+                },
+                end: (event, pageObject, corner) => {
+                    console.log('Drag ended on corner:', corner);
+                },
+                pressed: (event, pageObject, corner) => {
+                    console.log('Page pressed at corner:', corner);
+                },
+                released: (event, pageObject, corner) => {
+                    console.log('Page released at corner:', corner);
+                }
+            }
+        });
+        
+        this.flipbook = $(flipbookElement);
+    }    setupEventListeners() {
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
             switch(e.key) {
@@ -288,6 +509,21 @@ let flipbook;
 function initializeWhenReady() {
     if (typeof $ !== 'undefined' && typeof $.fn.turn !== 'undefined') {
         flipbook = new FlipbookManager();
+        
+        // Expose functions sau khi flipbook được khởi tạo
+        setTimeout(() => {
+            window.flipbook = {
+                next: () => flipbook?.next(),
+                previous: () => flipbook?.previous(),
+                goToPage: (page) => flipbook?.goToPage(page),
+                testCorner: (corner) => flipbook?.testCornerDrag(corner),
+                enableCorners: (enabled) => flipbook?.enableCorners(enabled),
+                getFlipbook: () => flipbook?.flipbook,
+                instance: flipbook  // Expose the entire instance for debugging
+            };
+            console.log('Global flipbook methods exposed');
+            console.log('Available methods:', Object.keys(window.flipbook));
+        }, 500);
     } else {
         setTimeout(initializeWhenReady, 100);
     }
@@ -296,10 +532,3 @@ function initializeWhenReady() {
 document.addEventListener('DOMContentLoaded', () => {
     initializeWhenReady();
 });
-
-// Expose functions to global scope for button onclick
-window.flipbook = {
-    next: () => flipbook?.next(),
-    previous: () => flipbook?.previous(),
-    goToPage: (page) => flipbook?.goToPage(page)
-};
