@@ -14,14 +14,6 @@ body {
     padding: 20px;
 }
 
-/* .flipbook-container {
-    position: relative;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 40px;
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-} */
 .flipbook-container {
     position: relative;
     background: rgba(255, 255, 255, 0.1);
@@ -32,8 +24,8 @@ body {
 }
 
 .flipbook {
-    width: 1700px;
-    height: 1300px;
+    width: 1400px;
+    height: 1000px;
     margin: 0 auto;
     position: relative;
     background: #fff;
@@ -47,6 +39,7 @@ body {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    z-index: 1;
 }
 
 .page {
@@ -84,7 +77,6 @@ body {
     -khtml-user-drag: none;
     -moz-user-drag: none;
     -o-user-drag: none;
-    /* Không sử dụng pointer-events: none để cho phép kéo thả */
 }
 
 /* First page styling */
@@ -202,36 +194,6 @@ body {
     overflow: visible;
 }
 
-/* Kích hoạt kéo thả cho các góc trang */
-.flipbook .turn-page .turn-page-corner {
-    cursor: pointer;
-}
-
-.flipbook .turn-page:hover {
-    cursor: pointer;
-}
-
-/* Đảm bảo khu vực có thể kéo thả ở các góc */
-.flipbook .turn-page {
-    position: relative;
-}
-
-.flipbook .turn-page::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 100px;
-    height: 100px;
-    cursor: pointer;
-    z-index: 1000;
-}
-
-.flipbook .turn-page:first-child::before {
-    left: 0;
-    right: auto;
-}
-
 .flipbook > div {
     border: none !important;
     margin: 0 !important;
@@ -239,13 +201,14 @@ body {
     outline: none !important;
 }
 
-/* Loại bỏ khoảng cách từ Turn.js */
-.flipbook .turn-page:nth-child(even) {
-    margin-left: 0 !important;
+/* Kích hoạt kéo thả cho các góc trang */
+.flipbook .turn-page:hover {
+    cursor: pointer;
 }
 
-.flipbook .turn-page:nth-child(odd) {
-    margin-right: 0 !important;
+/* Đảm bảo khu vực có thể kéo thả */
+.flipbook .turn-page {
+    position: relative;
 }
 
 /* Loading animation */

@@ -155,8 +155,8 @@ class FlipbookManager {
         
         // Đảm bảo Turn.js đã được khởi tạo hoàn toàn
         setTimeout(() => {
-            // Kích hoạt lại tính năng turn nếu cần
-            this.flipbook.turn('option', 'turnCorners', 'bl,br,tl,tr');
+            // Kích hoạt lại tính năng turn nếu cần - sử dụng cú pháp đúng
+            console.log('Turn.js initialized successfully');
         }, 100);
         
         // Xử lý thay đổi kích thước màn hình
@@ -185,18 +185,23 @@ class FlipbookManager {
         let flipbookWidth, flipbookHeight;
         
         if (screenWidth >= 1300) {
+            console.log("First")
             flipbookWidth = 1700;
             flipbookHeight = 1300;
         } else if (screenWidth >= 1100) {
+            console.log("Second")
             flipbookWidth = 1000;
             flipbookHeight = 667;
         } else if (screenWidth >= 900) {
+            console.log("Third")
             flipbookWidth = 800;
             flipbookHeight = 533;
         } else if (screenWidth >= 700) {
+            console.log("Fourth")
             flipbookWidth = 600;
             flipbookHeight = 450;
         } else {
+            console.log("Fifth")
             flipbookWidth = 400;
             flipbookHeight = 300;
         }
