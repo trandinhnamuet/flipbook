@@ -48,22 +48,32 @@
             align-items: center;
             justify-content: center;
             position: relative;
+            border: 1px solid #ddd;
         }
 
         .page canvas {
             max-width: 100%;
             max-height: 100%;
             display: block;
+            object-fit: contain;
         }
 
         .page.cover {
             width: 900px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #fff;
+            border: 2px solid #ddd;
+        }
+
+        .page.cover canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .page.double-page {
             display: flex;
             flex-direction: row;
+            padding: 0;
         }
 
         .page.double-page .left-page,
@@ -73,6 +83,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            border-right: 1px solid #eee;
+        }
+
+        .page.double-page .right-page {
+            border-right: none;
+            border-left: 1px solid #eee;
+        }
+
+        .page.double-page canvas {
+            max-width: 95%;
+            max-height: 95%;
+            display: block;
         }
 
         #loading {
@@ -214,24 +236,34 @@
                 const container = document.getElementById('flipbook-container');
                 const flipbook = document.getElementById('flipbook');
 
+                console.log('Bắt đầu tải PDF:', pdfUrl);
+                
                 // Tải PDF
                 const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
                 totalPages = pdf.numPages;
                 
+                console.log('PDF đã tải thành công, tổng số trang:', totalPages);
                 loadingDiv.querySelector('div:last-child').textContent = `Đang xử lý ${totalPages} trang...`;
 
                 let flipbookHTML = '';
                 
-                // Trang bìa (trang đầu tiên)
-                const coverCanvas = await renderPageToCanvas(pdf, 1);
+                // Trang bìa (trang đầu tiên) - hiển thị toàn màn hình
+                console.log('Đang render trang bìa...');
+                const coverCanvas = await renderPageToCanvas(pdf, 1, 2.0);
                 if (coverCanvas) {
                     flipbookHTML += `<div class="page cover">${coverCanvas.outerHTML}</div>`;
+                    console.log('Trang bìa đã được tạo');
                 }
+
+                // Trang trống đầu tiên để cân bằng
+                flipbookHTML += '<div class="page"></div>';
 
                 // Các trang còn lại - hiển thị 2 trang 1
                 for (let i = 2; i <= totalPages; i += 2) {
-                    const leftCanvas = await renderPageToCanvas(pdf, i);
-                    const rightCanvas = i + 1 <= totalPages ? await renderPageToCanvas(pdf, i + 1) : null;
+                    console.log(`Đang render trang ${i} và ${i+1}...`);
+                    
+                    const leftCanvas = await renderPageToCanvas(pdf, i, 1.2);
+                    const rightCanvas = i + 1 <= totalPages ? await renderPageToCanvas(pdf, i + 1, 1.2) : null;
                     
                     let pageHTML = '<div class="page double-page">';
                     
@@ -251,34 +283,43 @@
 
                 // Thêm HTML vào flipbook
                 flipbook.innerHTML = flipbookHTML;
+                console.log('HTML đã được thêm vào flipbook');
 
                 // Ẩn loading, hiện flipbook
                 loadingDiv.style.display = 'none';
                 container.style.display = 'block';
+                
+                console.log('Bắt đầu khởi tạo turn.js...');
 
-                // Khởi tạo turn.js
-                $(flipbook).turn({
-                    width: 900,
-                    height: 600,
-                    autoCenter: true,
-                    display: 'double',
-                    acceleration: true,
-                    gradients: true,
-                    elevation: 50,
-                    when: {
-                        turning: function(event, page, view) {
-                            updatePageInfo(page);
+                // Khởi tạo turn.js với timeout để đảm bảo DOM đã render
+                setTimeout(() => {
+                    $(flipbook).turn({
+                        width: 900,
+                        height: 600,
+                        autoCenter: true,
+                        display: 'single',
+                        acceleration: true,
+                        gradients: true,
+                        elevation: 50,
+                        when: {
+                            turning: function(event, page, view) {
+                                updatePageInfo(page);
+                            },
+                            turned: function(event, page, view) {
+                                console.log('Đã lật đến trang:', page);
+                            }
                         }
-                    }
-                });
+                    });
 
-                flipbookInstance = $(flipbook);
-                updatePageInfo(1);
+                    flipbookInstance = $(flipbook);
+                    updatePageInfo(1);
+                    console.log('Turn.js đã được khởi tạo thành công!');
+                }, 100);
 
             } catch (error) {
                 console.error('Lỗi khi tạo flipbook:', error);
                 document.getElementById('loading').innerHTML = 
-                    '<div class="error-message">Không thể tải file PDF! Vui lòng kiểm tra đường dẫn file.</div>';
+                    '<div class="error-message">Không thể tải file PDF! Vui lòng kiểm tra đường dẫn file.<br>Chi tiết lỗi: ' + error.message + '</div>';
             }
         }
 
