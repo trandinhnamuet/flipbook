@@ -124,6 +124,7 @@ class FlipbookManager {
             duration: 1000,
             pages: this.totalPages,
             display: 'double',
+            turnCorners: 'bl,br,tl,tr',
             when: {
                 turning: (event, page, view) => {
                     this.currentPage = page;

@@ -42,6 +42,11 @@ body {
     overflow: visible;
     border: none;
     padding: 0;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 .page {
@@ -56,6 +61,11 @@ body {
     overflow: hidden;
     margin: 0;
     padding: 0;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 .page img {
@@ -66,6 +76,15 @@ body {
     box-shadow: none;
     margin: 0;
     padding: 0;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
 }
 
 /* First page styling */
@@ -146,6 +165,7 @@ body {
     border: none !important;
     box-shadow: none !important;
     outline: none !important;
+    cursor: pointer;
 }
 
 .flipbook .page {
@@ -158,6 +178,7 @@ body {
     margin: 0 !important;
     padding: 0 !important;
     outline: none !important;
+    cursor: pointer;
 }
 
 /* Loại bỏ khoảng cách giữa các trang */
@@ -173,11 +194,21 @@ body {
     padding: 0 !important;
     border: none !important;
     outline: none !important;
+    cursor: pointer;
 }
 
 /* Đảm bảo các trang liền mạch */
 .flipbook {
     overflow: visible;
+}
+
+/* Kích hoạt kéo thả cho các góc trang */
+.flipbook .turn-page .turn-page-corner {
+    cursor: pointer;
+}
+
+.flipbook .turn-page:hover {
+    cursor: pointer;
 }
 
 .flipbook > div {
