@@ -56,13 +56,10 @@ class FlipbookManager {
             flipbookElement.appendChild(firstPage);
         }
         
-        // Các trang tiếp theo - hiển thị theo cặp
-        for (let i = 1; i < this.images.length; i += 2) {
-            const doublePage = this.createDoublePage(
-                this.images[i] || null,
-                this.images[i + 1] || null
-            );
-            flipbookElement.appendChild(doublePage);
+        // Các trang tiếp theo - mỗi trang một ảnh
+        for (let i = 1; i < this.images.length; i++) {
+            const singlePage = this.createSinglePage(this.images[i], false);
+            flipbookElement.appendChild(singlePage);
         }
         
         this.totalPages = flipbookElement.children.length;
@@ -83,44 +80,6 @@ class FlipbookManager {
             };
             page.appendChild(img);
         }
-        
-        return page;
-    }
-    
-    createDoublePage(leftImageSrc, rightImageSrc) {
-        const page = document.createElement('div');
-        page.className = 'page double-page';
-        
-        // Trang trái
-        const leftDiv = document.createElement('div');
-        leftDiv.className = 'page-left';
-        if (leftImageSrc) {
-            const leftImg = document.createElement('img');
-            leftImg.src = `${this.imageFolder}${leftImageSrc}`;
-            leftImg.alt = `Page ${leftImageSrc}`;
-            leftImg.onerror = () => {
-                leftImg.style.display = 'none';
-                leftDiv.innerHTML = '<div style="color: #999;">Không thể tải ảnh</div>';
-            };
-            leftDiv.appendChild(leftImg);
-        }
-        
-        // Trang phải
-        const rightDiv = document.createElement('div');
-        rightDiv.className = 'page-right';
-        if (rightImageSrc) {
-            const rightImg = document.createElement('img');
-            rightImg.src = `${this.imageFolder}${rightImageSrc}`;
-            rightImg.alt = `Page ${rightImageSrc}`;
-            rightImg.onerror = () => {
-                rightImg.style.display = 'none';
-                rightDiv.innerHTML = '<div style="color: #999;">Không thể tải ảnh</div>';
-            };
-            rightDiv.appendChild(rightImg);
-        }
-        
-        page.appendChild(leftDiv);
-        page.appendChild(rightDiv);
         
         return page;
     }

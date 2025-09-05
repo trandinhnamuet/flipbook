@@ -43,13 +43,15 @@ body {
     justify-content: center;
     position: relative;
     border: 1px solid #ddd;
+    overflow: hidden;
 }
 
 .page img {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 95%;
+    max-height: 95%;
     object-fit: contain;
     border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* First page styling */
@@ -61,31 +63,6 @@ body {
     max-width: 90%;
     max-height: 90%;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Double page styling */
-.page.double-page {
-    display: flex;
-    flex-direction: row;
-}
-
-.page.double-page .page-left,
-.page.double-page .page-right {
-    width: 50%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-.page.double-page .page-left {
-    border-right: 1px solid #ddd;
-}
-
-.page.double-page img {
-    max-width: 95%;
-    max-height: 95%;
 }
 
 /* Navigation buttons */
