@@ -167,8 +167,8 @@ class FlipbookManager {
         let flipbookWidth, flipbookHeight;
         
         if (screenWidth >= 1300) {
-            flipbookWidth = 1200;
-            flipbookHeight = 800;
+            flipbookWidth = 1400;
+            flipbookHeight = 1000;
         } else if (screenWidth >= 1100) {
             flipbookWidth = 1000;
             flipbookHeight = 667;
