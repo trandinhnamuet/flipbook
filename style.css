@@ -1,13 +1,18 @@
 body {
   margin: 0;
+  background: #333;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: #ccc;
 }
 
-.flipbook {
-  width: 800px;
-  height: 600px;
+#flipbook {
+  width: 1000px;   /* 2 trang */
+  height: 700px;
+}
+
+#flipbook .page {
+  background: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }

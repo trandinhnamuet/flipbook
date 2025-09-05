@@ -1,11 +1,10 @@
-const url = "assets/phutraco.pdf"; // file PDF bạn muốn show
+const url = "assets/phutraco.pdf"; // PDF của bạn
 
 pdfjsLib.getDocument(url).promise.then(function(pdf) {
-  let pages = [];
+  const flipbook = document.getElementById("flipbook");
 
-  // Lấy tất cả các trang PDF -> render ra <canvas>
-  for (let i = 1; i <= pdf.numPages; i++) {
-    pdf.getPage(i).then(function(page) {
+  let loadPage = (num) => {
+    pdf.getPage(num).then(function(page) {
       const viewport = page.getViewport({ scale: 1.5 });
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d");
@@ -13,20 +12,27 @@ pdfjsLib.getDocument(url).promise.then(function(pdf) {
       canvas.height = viewport.height;
 
       page.render({ canvasContext: context, viewport: viewport }).promise.then(() => {
-        // thêm canvas vào flipbook
-        const pageDiv = document.createElement("div");
-        pageDiv.appendChild(canvas);
-        document.getElementById("flipbook").appendChild(pageDiv);
+        const div = document.createElement("div");
+        div.className = "page";
+        div.appendChild(canvas);
+        flipbook.appendChild(div);
 
-        // Khi load hết thì tạo flipbook
-        if (i === pdf.numPages) {
+        // Khi load xong tất cả thì khởi tạo turn.js
+        if (flipbook.childElementCount === pdf.numPages) {
           $("#flipbook").turn({
-            width: 800,
-            height: 600,
-            autoCenter: true
+            width: 1000,
+            height: 700,
+            autoCenter: true,
+            display: "double",   // <-- 2 trang cùng lúc
+            elevation: 50,
+            gradients: true
           });
         }
       });
     });
+  };
+
+  for (let i = 1; i <= pdf.numPages; i++) {
+    loadPage(i);
   }
 });
