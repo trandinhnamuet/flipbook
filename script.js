@@ -18,9 +18,9 @@ class FlipbookManager {
     }
     
     async loadImages() {
-        // Danh sách các ảnh (từ page-0001 đến page-0028 như trong thư mục)
+        // Danh sách các ảnh (từ page-0001 đến page-0046 để load tất cả ảnh trong thư mục)
         const imageFiles = [];
-        for (let i = 1; i <= 28; i++) {
+        for (let i = 1; i <= 46; i++) {
             const pageNumber = i.toString().padStart(4, '0');
             imageFiles.push(`Công ty Cổ phần Thương mại và Xây dựng Phương Đông (15)_page-${pageNumber}.jpg`);
         }
