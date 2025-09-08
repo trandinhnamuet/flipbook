@@ -1,16 +1,18 @@
 import os
-from pdf2image import convert_from_path
+import fitz  # PyMuPDF
+from PIL import Image
 
-# Tạo thư mục "ICS" nếu chưa có
 output_folder = "ICS"
 os.makedirs(output_folder, exist_ok=True)
 
-# Chuyển PDF thành ảnh (dpi = 300 để in ấn rõ nét)
-pages = convert_from_path("ICS.pdf", dpi=300)
+pdf_path = "ICS.pdf"
+doc = fitz.open(pdf_path)
 
-# Lưu từng trang vào thư mục ICS
-for i, page in enumerate(pages):
-    filename = os.path.join(output_folder, f"page_{i+1}.jpg")
-    page.save(filename, "JPEG")
+for i in range(len(doc)):
+    page = doc.load_page(i)
+    pix = page.get_pixmap(dpi=300)
+    img_path = os.path.join(output_folder, f"page_{i+1}.jpg")
+    img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+    img.save(img_path, "JPEG")
 
-print(f"Đã lưu {len(pages)} trang vào thư mục {output_folder}")
+print(f"Đã lưu {len(doc)} trang vào thư mục {output_folder}")

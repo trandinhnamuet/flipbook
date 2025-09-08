@@ -22,7 +22,7 @@ class FlipbookManager {
         const imageFiles = [];
         for (let i = 1; i <= 46; i++) {
             const pageNumber = i.toString().padStart(4, '0');
-            imageFiles.push(`Công ty Cổ phần Thương mại và Xây dựng Phương Đông (15)_page-${pageNumber}.jpg`);
+            imageFiles.push(`Phutraco_page-${pageNumber}.jpg`);
         }
         
         // Kiểm tra và lọc các ảnh tồn tại
@@ -50,17 +50,12 @@ class FlipbookManager {
             return;
         }
         
-        // Thêm một trang trắng ở đầu để trang đầu tiên show một mình
-        const blankPage = document.createElement('div');
-        blankPage.className = 'page blank-page';
-        flipbookElement.appendChild(blankPage);
-
-        // Trang đầu tiên - hiển thị một mình (sau trang trắng)
+        // Trang đầu tiên - hiển thị một mình
         if (this.images.length > 0) {
             const firstPage = this.createSinglePage(this.images[0], true);
             flipbookElement.appendChild(firstPage);
         }
-
+        
         // Các trang tiếp theo - mỗi trang một ảnh
         for (let i = 1; i < this.images.length; i++) {
             const singlePage = this.createSinglePage(this.images[i], false);
