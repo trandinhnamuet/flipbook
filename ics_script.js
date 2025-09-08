@@ -105,11 +105,39 @@ class ICSFlipbookManager {
         });
         this.flipbook = $(flipbookElement);
         this.updateNavigationButtons();
+        this.addDebugEvents();
         this.handleResize();
         window.addEventListener('resize', () => {
             this.handleResize();
         });
     }
+
+    addDebugEvents() {
+        const flipbookElement = document.getElementById('flipbook');
+        flipbookElement.addEventListener('mousedown', (e) => {
+            const rect = flipbookElement.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const width = rect.width;
+            const height = rect.height;
+            const cornerSize = Math.min(width * 0.75, height * 0.75);
+            let corner = null;
+            if (x <= cornerSize && y <= cornerSize) corner = 'tl';
+            else if (x >= width - cornerSize && y <= cornerSize) corner = 'tr';
+            else if (x <= cornerSize && y >= height - cornerSize) corner = 'bl';
+            else if (x >= width - cornerSize && y >= height - cornerSize) corner = 'br';
+            if (corner) {
+                setTimeout(() => {
+                    if (corner === 'br' || corner === 'tr') {
+                        this.next();
+                    } else if (corner === 'bl' || corner === 'tl') {
+                        this.previous();
+                    }
+                }, 100);
+            }
+        });
+    }
+
     updatePageCounter() {
         document.getElementById('currentPage').textContent = this.currentPage;
         document.getElementById('totalPages').textContent = this.totalPages;
