@@ -16,7 +16,7 @@ class ICSFlipbookManager {
     }
     loadImages() {
         // Tìm tất cả ảnh trong thư mục ICS (page_1.jpg, page_2.jpg, ...)
-        for (let i = 1; i <= 30; i++) {
+        for (let i = 1; i <= 32; i++) {
             this.images.push(`page_${i}.jpg`);
         }
     }
